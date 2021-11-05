@@ -2,8 +2,8 @@ function generateCountriesHTML(
   flag,
   name,
   population,
-  area,
   region,
+  area,
   subregion,
   lat,
   lon,
@@ -11,22 +11,27 @@ function generateCountriesHTML(
   ccode
 ) {
   return `
-        <div class="country" tabindex="-1">
-            <div class="country-flag" style="background-image: url(${flag});"></div>
-              <div class="country-about">
-                <h3 class="country-name">${name}</h3>
-                <p>Population: <span class="population">${population}</span></p>
-                <p>Area: <span class="area">${area}</span> km&sup2;</p>
-    
-                <p>Region: <span class="region">${region}</span></p>
-                <p>Subregion: <span class="subregion">${subregion}</span></p>
-                <p>Lat: <span class="lat">${lat}</span> Lon: <span class="lon">${lon} </span><span><button>Map</button></span></p>
-                <p>Code: <span class="code">${code}</span> Calling Code: <span class="ccode">${ccode}</span></p>
-    
-              </div>
+      <div class="country" tabindex="-1">
+          <div class="country-flag" style="background-image: url(${flag});"></div>
+            <div class="country-about">
+              <h3 class="country-name">${name}</h3>
+              <p>Population: <span class="population">${numberWithCommas(
+                population
+              )}</span></p>
+              <p>Area: <span class="area">${region}</span></p>
+              <p>Area: <span class="area">${area}</span> km&sup2;</p>
+
+  
+              <p>Region: <span class="region">${region}</span></p>
+              <p>Subregion: <span class="subregion">${subregion}</span></p>
+              <p>Lat: <span class="lat">${lat}</span> Lon: <span class="lon">${lon} </span><span><button>Map</button></span></p>
+              <p>Code: <span class="code">${code}</span> Calling Code: <span class="ccode">${ccode}</span></p>
+
+
             </div>
-        </div>
-        `;
+          </div>
+      </div>
+      `;
 }
 
 function numberWithCommas(x) {
@@ -35,9 +40,7 @@ function numberWithCommas(x) {
 
 async function uploadData() {
   let countries = document.querySelector(".countries");
-  let response = await fetch(
-    "https://i7.cs.hku.hk/~c3322a/2021_22/ASS2/getdata.php"
-  );
+  let response = await fetch("https://restcountries.com/v2/all");
 
   if (response.ok) {
     let data = await response.json();
@@ -48,13 +51,9 @@ async function uploadData() {
           country.flag,
           country.name,
           country.population,
-          country.area,
           country.region,
-          country.subregion,
-          country.latlng[0],
-          country.latlng[1],
-          country.alpha3Code,
-          country.callingCodes[0]
+          country.area,
+          country.subregion
         )
       );
     }
@@ -93,7 +92,7 @@ document
   .addEventListener("click", dropDownMenu);
 document.addEventListener("click", dropDownMenuClick);
 
-function sortyBy(e) {
+function sortyByWorldPart(e) {
   document.querySelector(".select-title").innerHTML = e.target.innerHTML;
   let countries = document.querySelectorAll(".country");
   for (country of countries) {
@@ -109,7 +108,7 @@ function sortyBy(e) {
 
 document
   .querySelector(".select-options")
-  .addEventListener("click", (e) => sortyBy(e));
+  .addEventListener("click", (e) => sortyByWorldPart(e));
 
 function countrySearch() {
   let searchInput = document.querySelector(
@@ -159,49 +158,49 @@ function generateDetailHTML(
   borders
 ) {
   return `
-            <div class="country-detail">
-              <div class="detail-header">
-                <button>&#8592; Back</button>
+          <div class="country-detail">
+            <div class="detail-header">
+              <button>&#8592; Back</button>
+            </div>
+            <div class="detail-info">
+              <div class="detail-info__flag">
+                <img src="${flag}" alt="${name}">
               </div>
-              <div class="detail-info">
-                <div class="detail-info__flag">
-                  <img src="${flag}" alt="${name}">
+              <div class="detail-info__about">
+                <div class="detail-info__about--title">
+                  <h2>${name}</h2>
                 </div>
-                <div class="detail-info__about">
-                  <div class="detail-info__about--title">
-                    <h2>${name}</h2>
-                  </div>
-                  <div class="detail-info__about--left">
-                    <p>Native name: <span class="detail-info__about--native-name">${nativeName}</span></p>
-                    <p>Population: <span class="detail-info__about--population">${numberWithCommas(
-                      population
-                    )}</span></p>
-                    <p>Region: <span class="detail-info__about--region">${region}</span></p>
-                    <p>Sub Region: <span class="detail-info__about--sub-region">${haveProperties(
-                      subregion
-                    )}</span></p>
-                    <p>Capital: <span class="detail-info__about--capital">${haveProperties(
-                      capital
-                    )}</span></p>
-                  </div>
-                  <div class="detail-info__about--right">
-                    <p>Top Level Domain: <span class="detail-info__about--top-domain">${topLevelDomain.join(
-                      ", "
-                    )}</span></p>
-                    <p>Currencies: <span class="detail-info__about--currencies">${showAll(
-                      currencies
-                    )}</span></p>
-                    <p>Languages: <span class="detail-info__about--languages">${showAll(
-                      languages
-                    )}</span></p>
-                  </div>
-                  <div class="detail-info__about--buttom">
-                    Border Countries: <span class="detail-info-about--borders">${borders}</span>
-                  </div>
+                <div class="detail-info__about--left">
+                  <p>Native name: <span class="detail-info__about--native-name">${nativeName}</span></p>
+                  <p>Population: <span class="detail-info__about--population">${numberWithCommas(
+                    population
+                  )}</span></p>
+                  <p>Region: <span class="detail-info__about--region">${region}</span></p>
+                  <p>Sub Region: <span class="detail-info__about--sub-region">${haveProperties(
+                    subregion
+                  )}</span></p>
+                  <p>Capital: <span class="detail-info__about--capital">${haveProperties(
+                    capital
+                  )}</span></p>
+                </div>
+                <div class="detail-info__about--right">
+                  <p>Top Level Domain: <span class="detail-info__about--top-domain">${topLevelDomain.join(
+                    ", "
+                  )}</span></p>
+                  <p>Currencies: <span class="detail-info__about--currencies">${showAll(
+                    currencies
+                  )}</span></p>
+                  <p>Languages: <span class="detail-info__about--languages">${showAll(
+                    languages
+                  )}</span></p>
+                </div>
+                <div class="detail-info__about--buttom">
+                  Border Countries: <span class="detail-info-about--borders">${borders}</span>
                 </div>
               </div>
             </div>
-      `;
+          </div>
+    `;
 }
 
 function haveProperties(property) {
@@ -268,4 +267,29 @@ function showInDetail(countries, countryName) {
       el.classList.toggle("dark");
     }
   }
+}
+
+function switchTheme() {
+  document.querySelector(".header-button").addEventListener("click", (e) => {
+    document.body.classList.toggle("dark-bg");
+    document.querySelector(".header").classList.toggle("dark");
+    document.querySelector(".header-button").classList.toggle("dark");
+    document.querySelector(".main").classList.toggle("dark-bg");
+    document
+      .querySelector('.main-top__input input[type="text"]')
+      .classList.toggle("dark");
+    document
+      .querySelector(".main-top__select--custom")
+      .classList.toggle("dark");
+    document.querySelector(".select-options").classList.toggle("dark");
+    for (let key of document.querySelectorAll(".country")) {
+      key.classList.toggle("dark");
+    }
+    if (document.querySelector(".country-detail")) {
+      document.querySelector(".detail-header button").classList.toggle("dark");
+      for (let el of document.querySelectorAll(".detail-info-border__buttom")) {
+        el.classList.toggle("dark");
+      }
+    }
+  });
 }

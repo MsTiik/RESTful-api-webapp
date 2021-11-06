@@ -1,4 +1,22 @@
 //   <p>ORDERED BY: ${""}<span>SHOWERD REGION: </span> </p>
+var btn = document.createElement("BUTTON");
+
+async function statusLine() {}
+
+statusLine = () => {
+  return `
+
+  <header>
+  <h1>Countries / Territories / Areas</h1>
+  </header>
+
+  `;
+};
+
+statusLine();
+
+// var header = document.body;
+// header.innerHTML = "<h3>Public Offers</h3>";
 
 genCountriesHTML = (
   flag,

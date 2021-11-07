@@ -107,29 +107,80 @@ let orderByT = document.createTextNode("Order By: ${order}");
 let dsShowedRegion = document.createElement("span");
 let showedRegionT = document.createTextNode("Showed Region: ${region} ");
 dsOrderBy.appendChild(orderByT);
-dsOrderBy.setAttribute("id", "order-by");
+dsOrderBy.id = "order-by";
 dsShowedRegion.appendChild(showedRegionT);
-dsShowedRegion.setAttribute("id", "showed-region");
+dsShowedRegion.id = "showed-region";
 displayStatus.appendChild(dsOrderBy);
 dsOrderBy.appendChild(dsShowedRegion);
 
 // map
-let maps = document.createElement("div");
-maps.classList.add("map");
-maps.id = "map";
-document.body.appendChild(maps);
 
 // main content
 let mainContent = document.createElement("section");
 mainContent.classList.add("main-content");
-mainContent.setAttribute("id", "main-content");
+mainContent.id = "main-content";
+
 document.body.appendChild(mainContent);
 
 // country grid
 let countryGrid = document.createElement("div");
 countryGrid.classList.add("country-grid");
-countryGrid.setAttribute("id", "country-grid");
+countryGrid.id = "country-grid";
 mainContent.appendChild(countryGrid);
+
+var map;
+var counter = 0;
+showMap = (latitude, longitude, area) => {
+  let maps = document.createElement("div");
+  maps.classList.add("map");
+  maps.id = "map";
+
+  let closeMapButton = document.createElement("button");
+  closeMapButton.id = "close-map-button";
+  closeMapButton.innerHTML = "Close";
+  closeMapButton.setAttribute("onclick", "closeMap()");
+
+  let closeMapTarget = document.getElementById("close-map-button");
+  if (closeMapTarget != null) {
+    closeMapTarget.addEventListener("click", function () {
+      closeMap();
+    });
+  }
+
+  maps.appendChild(closeMapButton);
+  document.body.appendChild(maps);
+
+  if (counter == 0) {
+    map = new ol.Map({
+      target: "map",
+      layers: [new ol.layer.Tile({ source: new ol.source.OSM() })],
+      view: new ol.View({
+        center: ol.proj.fromLonLat([longitude, latitude]),
+        zoom: 11 - Math.log10(area / (16 - Math.log10(area))),
+      }),
+    });
+
+    counter++;
+  } else {
+    map.setTarget(null);
+
+    map = new ol.Map({
+      target: "map",
+      layers: [new ol.layer.Tile({ source: new ol.source.OSM() })],
+      view: new ol.View({
+        center: ol.proj.fromLonLat([longitude, latitude]),
+        zoom: 11 - Math.log10(area / (16 - Math.log10(area))),
+      }),
+    });
+  }
+  //change to update
+};
+
+closeMap = () => {
+  map.setTarget(null);
+  let x = document.getElementById("close-map-button");
+  x.remove();
+};
 
 countryHTML = (
   flag,
@@ -144,37 +195,37 @@ countryHTML = (
   cCode
 ) => {
   return `
-<div class="country" tabindex="-1">
-
-<div class="country-img-container">
-<img
-  class="image-style"
-  src="${flag}"
-/>
-</div>
-
-<div class="country-info">
-<h3 class="name">${name}</h3>
-<p>
-  Population:
-  <span class="pop">${pop}</span>
-</p>
-<p>Area: <span class="area">${area}</span> km&sup2;</p>
-
-<p>Region: <span class="region">${region}</span></p>
-<p>Subregion: <span class="sRegion">${sRegion}</span></p>
-<p>
-  Lat: <span class="lat">${lat}</span> Lon:
-  <span class="lon">${lon} </span><span><button class="MapBtn" onclick="showMap(${lat}, ${lon}, ${area})">Map</button> </span>
-</p>
-
-<p>
-  Code: <span class="code">${code}</span> 
-  Calling Code: <span class="cCode">${cCode}</span>
-</p>
-</div>
-</div>
-`;
+  <div class="country" tabindex="-1">
+  
+  <div class="country-img-container">
+  <img
+    class="image-style"
+    src="${flag}"
+  />
+  </div>
+  
+  <div class="country-info">
+  <h3 class="name">${name}</h3>
+  <p>
+    Population:
+    <span class="pop">${pop}</span>
+  </p>
+  <p>Area: <span class="area">${area}</span> km&sup2;</p>
+  
+  <p>Region: <span class="region">${region}</span></p>
+  <p>Subregion: <span class="sRegion">${sRegion}</span></p>
+  <p>
+    Lat: <span class="lat">${lat}</span> Lon:
+    <span class="lon">${lon} </span><span><button class="MapBtn" onclick="showMap(${lat}, ${lon}, ${area})">Map</button> </span>
+  </p>
+  
+  <p>
+    Code: <span class="code">${code}</span> 
+    Calling Code: <span class="cCode">${cCode}</span>
+  </p>
+  </div>
+  </div>
+  `;
 };
 
 async function renderCountries() {
@@ -247,20 +298,3 @@ async function renderCountries() {
 }
 
 renderCountries();
-
-var timesClicked = 0;
-showMap = (latitude, longitude, area) => {
-  if (timesClicked > 1) {
-  }
-  var map = new ol.Map({
-    target: "map",
-    layers: [new ol.layer.Tile({ source: new ol.source.OSM() })],
-    view: new ol.View({
-      center: ol.proj.fromLonLat([longitude, latitude]),
-      zoom: 11 - Math.log10(area / (16 - Math.log10(area))),
-    }),
-  });
-};
-
-// let mapBtn = document.getElementById("mapBtn");
-// mapBtn.addEventListener("click", showMap());

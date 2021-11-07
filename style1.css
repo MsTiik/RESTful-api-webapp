@@ -13,7 +13,7 @@
 
 header {
   background-color: var(--light);
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
   padding: 25px;
 }
 
@@ -47,13 +47,13 @@ select {
   appearance: none;
   background-color: transparent;
   border: none;
-  padding: 0 1em 0 0;
+  padding: 0 50px 0 0;
   margin: 0;
   font-family: inherit;
   font-size: inherit;
   cursor: inherit;
   line-height: inherit;
-  box-shadow: 1px 1px 2px 1px rgba(0, 0, 255, 0.2);
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
 }
 
 .sort-region-elements select {
@@ -74,7 +74,7 @@ select {
   width: 300px;
   margin: 0px 10px 30px;
   border-radius: 3px;
-  box-shadow: 1px 1px 2px 1px rgba(0, 0, 255, 0.2);
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
 }
 
 .display-status {
@@ -130,4 +130,24 @@ button {
   cursor: pointer;
   background-color: rgba(255, 152, 152, 0.89);
   border-style: none;
+}
+
+#map {
+  width: 60%;
+  height: 60%;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  pointer-events: none;
+}
+
+.inactive {
+  display: none !important;
+}
+
+.active {
+  display: grid !important;
 }

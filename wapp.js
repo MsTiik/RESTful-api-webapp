@@ -1,3 +1,13 @@
+/**
+ * TODO
+ * - remove map button if latlng is null
+ * - restyle sort stuff
+ * - get status line working
+ * - get cancel search to work
+ *
+ * - SORT feature , region and sort-by
+ */
+
 renderHeader = () => {
   let headerElement = document.createElement("HEADER");
   headerElement.innerHTML = "<h1>Countries / Territories / Areas</h1>";
@@ -14,7 +24,9 @@ searchSortBar.id = "search-sort-bar";
 document.body.appendChild(searchSortBar);
 
 // search box
-let searchElement = document.createElement("input");
+let searchElement = document.createElement("INPUT");
+searchElement.setAttribute("type", "search");
+searchElement.setAttribute("placeholder", "Search name...");
 searchElement.classList.add("search-element");
 searchElement.id = "search-element";
 searchSortBar.appendChild(searchElement);
@@ -34,6 +46,14 @@ let opiton = document.createElement("OPTION");
 let sortO1 = opiton.cloneNode(true);
 let sortO2 = opiton.cloneNode(true);
 let sortO3 = opiton.cloneNode(true);
+let sortDefault = opiton.cloneNode(true);
+sortDefault.setAttribute("value", "");
+sortDefault.setAttribute("selected", "");
+sortDefault.setAttribute("disabled", "");
+sortDefault.setAttribute("hidden", "");
+sortDefault.innerHTML = "Sort By";
+
+sort.appendChild(sortDefault);
 sort.appendChild(sortO1);
 sortO1.innerHTML = "<p>Area</a>";
 sort.appendChild(sortO2);
@@ -48,6 +68,14 @@ let regionO4 = opiton.cloneNode(true);
 let regionO5 = opiton.cloneNode(true);
 let regionO6 = opiton.cloneNode(true);
 let regionO7 = opiton.cloneNode(true);
+let regionDefault = opiton.cloneNode(true);
+regionDefault.setAttribute("value", "");
+regionDefault.setAttribute("selected", "");
+regionDefault.setAttribute("disabled", "");
+regionDefault.setAttribute("hidden", "");
+regionDefault.innerHTML = "By Region";
+
+region.appendChild(regionDefault);
 region.appendChild(regionO1);
 regionO1.innerHTML = "<p>All</a>";
 region.appendChild(regionO2);
@@ -84,6 +112,12 @@ dsShowedRegion.appendChild(showedRegionT);
 dsShowedRegion.setAttribute("id", "showed-region");
 displayStatus.appendChild(dsOrderBy);
 dsOrderBy.appendChild(dsShowedRegion);
+
+// map
+let maps = document.createElement("div");
+maps.classList.add("map");
+maps.id = "map";
+document.body.appendChild(maps);
 
 // main content
 let mainContent = document.createElement("section");
@@ -131,7 +165,7 @@ countryHTML = (
 <p>Subregion: <span class="sRegion">${sRegion}</span></p>
 <p>
   Lat: <span class="lat">${lat}</span> Lon:
-  <span class="lon">${lon} </span><span id="map"><button class="btn" onclick="showMap(${lat}, ${lon})">Map</button></span>
+  <span class="lon">${lon} </span><span><button class="MapBtn" onclick="showMap(${lat}, ${lon}, ${area})">Map</button> </span>
 </p>
 
 <p>
@@ -165,6 +199,8 @@ async function renderCountries() {
       if (country.latlng == null) {
         position.latitude = "n/a";
         position.longitude = "n/a";
+        // const e = document.querySelector("#mapBtn");
+        // e.parentElement.removeChild(e);
       } else {
         position.latitude = country.latlng[0];
         position.longitude = country.latlng[1];
@@ -202,7 +238,29 @@ async function renderCountries() {
           )
         );
     }
+    // let mapBtn = document.getElementById("mapBtn");
+    // mapBtn.addEventListener(
+    //   "click",
+    //   showMap(position.latitude, position.longitude)
+    // );
   }
 }
 
 renderCountries();
+
+var timesClicked = 0;
+showMap = (latitude, longitude, area) => {
+  if (timesClicked > 1) {
+  }
+  var map = new ol.Map({
+    target: "map",
+    layers: [new ol.layer.Tile({ source: new ol.source.OSM() })],
+    view: new ol.View({
+      center: ol.proj.fromLonLat([longitude, latitude]),
+      zoom: 11 - Math.log10(area / (16 - Math.log10(area))),
+    }),
+  });
+};
+
+// let mapBtn = document.getElementById("mapBtn");
+// mapBtn.addEventListener("click", showMap());

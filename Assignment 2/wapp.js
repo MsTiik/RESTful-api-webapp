@@ -269,8 +269,6 @@ comparePopulation = (a, b) => {
   return b.population - a.population;
 };
 
-let RESULTS = 0;
-
 const renderCountries = async () => {
   countryList.innerHTML = "";
   await fetchCountryData();
@@ -336,8 +334,6 @@ const renderCountries = async () => {
     });
   }
 
-  RESULTS = countryData.length;
-
   // formatting of data
   countryData.forEach((country) => {
     let position = {
@@ -385,15 +381,6 @@ const orderbyStatus = document.getElementById("order-by");
 const inputRegion = document.getElementById("region");
 const orderbyRegion = document.getElementById("showed-region");
 
-// inputSearch.addEventListener("keypress", (e) => {
-//   if (e.key === "Enter") {
-//     inputTerm = e.target.value;
-//     // console.log("ABCD", inputTerm);
-
-//     renderCountries();
-//   }
-// });
-
 inputSort.addEventListener("change", (e) => {
   inputSortTerm = e.target.options[e.target.selectedIndex].text;
   orderbyStatus.innerHTML =
@@ -414,6 +401,9 @@ inputRegion.addEventListener("change", (e) => {
   renderCountries();
 });
 
+let searchAmount = document.createElement("p");
+searchAmount.id = "search-amount";
+
 let counterLOL = 0;
 document.getElementById("search-element").addEventListener("search", (e) => {
   if (counterLOL % 2 == 1) {
@@ -428,12 +418,12 @@ document.getElementById("search-element").addEventListener("search", (e) => {
     inputRegion.style.visibility = "collapse";
     orderbyRegion.style.visibility = "collapse";
     orderbyStatus.style.visibility = "collapse";
+    searchAmount.style.visibility = "visible";
 
-    let searchAmount = document.createElement("p");
-    searchAmount.id = "search-amount";
-    searchAmount.innerHTML = "Search Results: <b>" + RESULTS + "</b> Matches";
+    searchAmount.innerHTML = "Search Results: <b>" + +"</b> Matches";
 
     statusLine.appendChild(searchAmount);
+
     counterLOL++;
   }
   inputTerm = e.target.value;

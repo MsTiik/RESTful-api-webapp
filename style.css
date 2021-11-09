@@ -138,7 +138,7 @@ body {
 .country {
   cursor: pointer;
   background-color: var(--white);
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0);
   width: 300px;
 }
 

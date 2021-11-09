@@ -1,11 +1,13 @@
 /**
  * TODO
- * - remove map button if latlng is null
- * - restyle sort stuff
- * - get status line working
- * - get cancel search to work
+ * - remove map button if latlng is null    - TODO
+ * - restyle sort stuff                     - TODO
+ * - get status line working                - TODO
+ * - get cancel search to work              - TODO
  *
- * - SORT feature , region and sort-by
+ * - Map stuff, including close button      - DONE
+ *   - add functionality to the map         - HOLT
+ * - SORT feature , region and sort-by      - TODO
  */
 
 renderHeader = () => {
@@ -17,9 +19,8 @@ renderHeader();
 
 // search-sort bar
 let searchSortBar = document.createElement("div");
-searchSortBar.classList.add("search-sort-bar");
+searchSortBar.className = "search-sort-bar";
 searchSortBar.id = "search-sort-bar";
-// searchSortBar.innerHTML = "<br>";
 
 document.body.appendChild(searchSortBar);
 
@@ -27,14 +28,16 @@ document.body.appendChild(searchSortBar);
 let searchElement = document.createElement("INPUT");
 searchElement.setAttribute("type", "search");
 searchElement.setAttribute("placeholder", "Search name...");
-searchElement.classList.add("search-element");
+searchElement.setAttribute("keyup", "searchValue(this)");
+searchElement.className = "search-element";
 searchElement.id = "search-element";
+
 searchSortBar.appendChild(searchElement);
 
 // sort / region rection of search sort bar
 let searchBarSpan = document.createElement("span");
 let sortRegionSpan = document.createElement("span");
-sortRegionSpan.classList.add("sort-region-elements");
+sortRegionSpan.className = "sort-region-elements";
 
 let sortSpan = document.createElement("span");
 let regionSpan = document.createElement("span");
@@ -97,7 +100,7 @@ sortRegionSpan.appendChild(region);
 
 // displays order by and shown region info
 let displayStatus = document.createElement("div");
-displayStatus.classList.add("display-status");
+displayStatus.className = "display-status";
 displayStatus.setAttribute("id", "display-status");
 searchSortBar.appendChild(displayStatus);
 
@@ -117,14 +120,14 @@ dsOrderBy.appendChild(dsShowedRegion);
 
 // main content
 let mainContent = document.createElement("section");
-mainContent.classList.add("main-content");
+mainContent.className = "main-content";
 mainContent.id = "main-content";
 
 document.body.appendChild(mainContent);
 
 // country grid
 let countryGrid = document.createElement("div");
-countryGrid.classList.add("country-grid");
+countryGrid.className = "country-grid";
 countryGrid.id = "country-grid";
 mainContent.appendChild(countryGrid);
 
@@ -135,6 +138,13 @@ showMap = (latitude, longitude, area) => {
   maps.classList.add("map");
   maps.id = "map";
 
+  // sorting map functionality. HOLT
+  //   let x = document.getElementById("map");
+  //   //   !document.getElementById("map").style.visibility == "hidden"!
+  //   if (!(window.getComputedStyle(x).display === "none")) {
+  //     x.setAttribute("pointer-events", "all");
+  //   }
+
   let closeMapButton = document.createElement("button");
   closeMapButton.id = "close-map-button";
   closeMapButton.innerHTML = "Close";
@@ -142,9 +152,7 @@ showMap = (latitude, longitude, area) => {
 
   let closeMapTarget = document.getElementById("close-map-button");
   if (closeMapTarget != null) {
-    closeMapTarget.addEventListener("click", function () {
-      closeMap();
-    });
+    closeMapTarget.addEventListener("click", closeMap());
   }
 
   maps.appendChild(closeMapButton);
@@ -173,14 +181,37 @@ showMap = (latitude, longitude, area) => {
       }),
     });
   }
-  //change to update
 };
 
 closeMap = () => {
   map.setTarget(null);
   let x = document.getElementById("close-map-button");
   x.remove();
+  document.getElementById("map").style.visibility = "visible";
 };
+
+// searchCountries = () => {
+//   let input = document.querySelector(
+//     'div.search-sort-bar__input input[type="search"]'
+//   );
+
+//   let countryList = document.querySelectorAll(".country");
+//   //   input.onclick = () => (document.querySelector().innerHTML = )
+
+//   for (country of countryList) {
+//     if (
+//       country.children[1].children[0].innerHTML
+//         .toLowerCase()
+//         .substring(0, input.value.length) === input.value.toLowerCase()
+//     ) {
+//       country.classList.add("visible");
+//       country.classList.remove("invisible");
+//     } else {
+//       country.classList.add("invisible");
+//       country.classList.remove("visible");
+//     }
+//   }
+// };
 
 countryHTML = (
   flag,
@@ -228,73 +259,111 @@ countryHTML = (
   `;
 };
 
-async function renderCountries() {
-  let countryList = document.querySelector(".country-grid");
-  let response = await fetch(
+const inputSearch = document.getElementById("search-element");
+const countryList = document.getElementById("country-grid");
+
+let inputTerm = "";
+let countryData;
+
+const fetchCountryData = async () => {
+  countryData = await fetch(
     "https://i7.cs.hku.hk/~c3322a/2021_22/ASS2/getdata.php"
-  );
+  ).then((result) => result.json());
+};
 
-  if (response.status == 200) {
-    let countryData = await response.json();
-    console.log(countryData);
-    for (country of countryData) {
-      let position = {
-        latitude: "",
-        longitude: "",
-      };
+// inputSearch.addEventListener("keyup", (e) => {
+//   const inputTerm = e.target.value.toLowerCase();
+// });
 
-      console.log("lat1: " + country.latlng);
-      console.dir("country: " + country.name);
-      console.dir("countryList: " + countryList);
+// searchValue = (element) => {
+//   if (event.keyCode == 13) {
+//     alert(element.value);
+//     countryData.filter((country) => {
+//       if (country.classList != undefined) {
+//         if (country.name.toLowerCase().includes(element.value.toLowerCase())) {
+//           console.log(country.classList);
+//           console.log(Array.isArray(countryData));
+//           country.classList.add("active");
+//           country.classList.remove("inactive");
+//         } else {
+//           console.log(country.classList);
+//           country.classList.remove("active");
+//           country.classList.add("inactive");
+//         }
+//       }
+//     });
+//   }
+// };
 
-      if (country.latlng == null) {
-        position.latitude = "n/a";
-        position.longitude = "n/a";
-        // const e = document.querySelector("#mapBtn");
-        // e.parentElement.removeChild(e);
+const renderCountries = async () => {
+  countryList.innerHTML = "";
+  //   console.log(countryList);
+  //   console.log(countryData);
+
+  await fetchCountryData();
+
+  //   console.log(countryData);
+
+  countryData.filter((country) => {
+    if (country.classList != undefined) {
+      console.log("COUNTRYNAME", country.name.toLowerCase());
+      console.log("INPUTNAME--", inputTerm.toLowerCase());
+
+      if (country.name.toLowerCase().includes(inputTerm.toLowerCase())) {
+        country.classList.add("active");
       } else {
-        position.latitude = country.latlng[0];
-        position.longitude = country.latlng[1];
+        country.classList.add("inactive");
       }
-
-      if (country.alpha3Code == null) {
-        country.alpha3Code = "n/a";
-      }
-
-      console.log(country);
-      console.log(typeof country.alpha3Code); //todo - fix code WTF
-      console.log(country.alpha3Code),
-        countryList.insertAdjacentHTML(
-          "beforeend",
-          countryHTML(
-            country.flag,
-            country.name,
-            country.population,
-            country.area,
-            country.region,
-            country.subregion,
-            position.latitude,
-            position.longitude,
-            console.log(
-              "latlng: " + position.latitude + ", " + position.longitude
-            ),
-            country.alpha3Code,
-            country.callingCodes[0],
-            console.log(
-              "code: " +
-                country.alpha3Code +
-                " callingcode " +
-                country.callingCodes
-            )
-          )
-        );
     }
-    // let mapBtn = document.getElementById("mapBtn");
-    // mapBtn.addEventListener(
-    //   "click",
-    //   showMap(position.latitude, position.longitude)
-    // );
-  }
-}
+    console.log("X", inputTerm);
+    console.log("Y", country.classList);
+    console.log("Z", countryData);
+  });
+
+  countryData.forEach((country) => {
+    let position = {
+      latitude: "",
+      longitude: "",
+    };
+
+    if (country.latlng == null) {
+      position.latitude = "n/a";
+      position.longitude = "n/a";
+    } else {
+      position.latitude = country.latlng[0];
+      position.longitude = country.latlng[1];
+    }
+
+    if (country.alpha3Code == null) {
+      country.alpha3Code = "n/a";
+    }
+
+    countryList.insertAdjacentHTML(
+      "beforeend",
+      countryHTML(
+        country.flag,
+        country.name,
+        country.population,
+        country.area,
+        country.region,
+        country.subregion,
+        position.latitude,
+        position.longitude,
+        country.alpha3Code,
+        country.callingCodes[0]
+      )
+    );
+  });
+  //   searchValue();
+};
+// };
 
 renderCountries();
+
+inputSearch.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") {
+    inputTerm = e.target.value;
+    console.log(inputTerm);
+    renderCountries();
+  }
+});

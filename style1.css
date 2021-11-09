@@ -158,3 +158,17 @@ button {
   margin: 5px;
   pointer-events: all;
 }
+
+.inactive {
+  display: none !important;
+}
+
+.active {
+  display: grid !important;
+}
+
+.countries {
+  padding: 0;
+  list-style-type: none;
+  width: 480px;
+}
